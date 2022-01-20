@@ -5,4 +5,6 @@ module com.example.converter {
 
     opens com.example.converter to javafx.fxml;
     exports com.example.converter;
+    exports com.example.converter.util;
+    opens com.example.converter.util to javafx.fxml;
 }

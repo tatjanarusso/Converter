@@ -5,12 +5,116 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.converter.ConverterController">
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.Region?>
+<?import com.example.converter.util.CheckBoxCellFactory?>
+<?import javafx.scene.control.ComboBox?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.converter.ConverterController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
+    <left>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+        <GridPane hgap="10" vgap="10">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <Text text="Search for directories:"
+                  GridPane.columnIndex="0" GridPane.rowIndex="0"
+                  GridPane.columnSpan="2"/>
+
+            <Label text="Path:"
+                   GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+
+            <ComboBox editable="true" fx:id="pathfield" GridPane.columnIndex="1" GridPane.rowIndex="1">
+
+            </ComboBox>
+
+            <Label text="Filter:"
+                   GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+
+            <TextField fx:id="filterfield"
+                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <HBox spacing="10" alignment="bottom_right"
+                  GridPane.columnIndex="1" GridPane.rowIndex="10">
+                <Button text="Search" onAction="#onSearchClick" fx:id="searchButton"/>
+            </HBox>
+            <fx:define>
+                <ToggleGroup fx:id="group" />
+            </fx:define>
+
+            <RadioButton fx:id="rbExact" text="Exact" toggleGroup="$group"
+                         GridPane.columnIndex="0" GridPane.rowIndex="5" selected="true">
+            </RadioButton>
+
+            <RadioButton fx:id="rbContains" text="Contains" toggleGroup="$group"
+                         GridPane.columnIndex="0" GridPane.rowIndex="6">
+            </RadioButton>
+
+            <RadioButton fx:id="rbStartsWith" text="Starts with" toggleGroup="$group"
+                         GridPane.columnIndex="0" GridPane.rowIndex="7">
+            </RadioButton>
+
+            <RadioButton fx:id="rbEndsWith" text="Ends with" toggleGroup="$group"
+                         GridPane.columnIndex="0" GridPane.rowIndex="8">
+            </RadioButton>
+
+            <RadioButton fx:id="rbRegularExpression" text="Regular expression" toggleGroup="$group"
+                         GridPane.columnIndex="0" GridPane.rowIndex="9">
+            </RadioButton>
+
+        </GridPane>
+
+    </left>
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets
+                        top="10"
+                        right="10"
+                        left="10"
+                        bottom="10"
+                />
+            </padding>
+            <TableView fx:id="tableView" GridPane.columnIndex="0"
+                       GridPane.rowIndex="1"
+                       editable="true"
+                       VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Select" prefWidth="100" fx:id="selected">
+                        <cellValueFactory><PropertyValueFactory property="selected" />
+                        </cellValueFactory>
+                        <cellFactory><CheckBoxCellFactory /></cellFactory>
+                    </TableColumn>
+                    <TableColumn text="Path" prefWidth="400" fx:id="path">
+                        <cellValueFactory><PropertyValueFactory property="pathname" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Last modified" prefWidth="150">
+                        <cellValueFactory><PropertyValueFactory property="modificationdate" />
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+            <HBox spacing="10" GridPane.columnIndex="0"
+                  GridPane.rowIndex="2">
+                <Button text="Select all" fx:id="selectAllButton" onAction="#onSelectAllClick"/>
+                <Button text="Deselect all" fx:id="deselectAllButton" onAction="#onDeselectAllClick"/>
+                <Button text="Clear" onAction="#onClearClick" fx:id="clearButton"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button alignment="top_right" text="Delete" fx:id="deldirButton" onAction="#onConverterClick"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

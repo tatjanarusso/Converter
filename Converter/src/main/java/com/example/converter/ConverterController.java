@@ -98,7 +98,7 @@ public class ConverterController {
      */
     @FXML
     protected void onConverterClick(){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete?", ButtonType.OK, ButtonType.CANCEL);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Convert?", ButtonType.OK, ButtonType.CANCEL);
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.OK) {
@@ -107,7 +107,7 @@ public class ConverterController {
                 if (item.isSelected()){
                     System.out.println(item.getPathname());
                     File Converter = new File(item.getPathname());
-                    deleteDirectory(Converter);
+                    //deleteDirectory(Converter);
 
                 }
             }

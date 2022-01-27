@@ -1,6 +1,7 @@
 module com.example.converter {
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.apache.pdfbox;
 
 
     opens com.example.converter to javafx.fxml;

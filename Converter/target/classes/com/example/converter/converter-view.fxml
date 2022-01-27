@@ -40,12 +40,6 @@
 
             </ComboBox>
 
-            <Label text="Filter:"
-                   GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-
-            <TextField fx:id="filterfield"
-                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
             <HBox spacing="10" alignment="bottom_right"
                   GridPane.columnIndex="1" GridPane.rowIndex="10">
                 <Button text="Search" onAction="#onSearchClick" fx:id="searchButton"/>
@@ -54,15 +48,15 @@
                 <ToggleGroup fx:id="group" />
             </fx:define>
 
-            <RadioButton fx:id="rbExact" text="Exact" toggleGroup="$group"
+            <RadioButton fx:id="rbPDF" text="PDF" toggleGroup="$group"
                          GridPane.columnIndex="0" GridPane.rowIndex="5" selected="true">
             </RadioButton>
 
-            <RadioButton fx:id="rbContains" text="Contains" toggleGroup="$group"
+            <RadioButton fx:id="rbWord" text="Word" toggleGroup="$group"
                          GridPane.columnIndex="0" GridPane.rowIndex="6">
             </RadioButton>
 
-            <RadioButton fx:id="rbStartsWith" text="Starts with" toggleGroup="$group"
+            <RadioButton fx:id="rbZIP" text="ZIP" toggleGroup="$group"
                          GridPane.columnIndex="0" GridPane.rowIndex="7">
             </RadioButton>
 
@@ -113,7 +107,7 @@
                 <Button text="Deselect all" fx:id="deselectAllButton" onAction="#onDeselectAllClick"/>
                 <Button text="Clear" onAction="#onClearClick" fx:id="clearButton"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button alignment="top_right" text="Delete" fx:id="deldirButton" onAction="#onConverterClick"/>
+                <Button alignment="top_right" text="Convert" fx:id="convertButton" onAction="#onConverterClick"/>
             </HBox>
         </VBox>
     </center>

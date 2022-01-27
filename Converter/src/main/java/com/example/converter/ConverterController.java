@@ -9,7 +9,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
-import java.util.*;
 
 import static java.util.Collections.reverse;
 import static java.util.Collections.reverseOrder;
@@ -17,15 +16,14 @@ import static java.util.Collections.reverseOrder;
 public class ConverterController {
 
     @FXML private ComboBox<String> pathfield;
-    @FXML private TextField filterfield;
     @FXML private Button searchButton;
     @FXML private Button clearButton;
     @FXML private Button selectAllButton;
     @FXML private Button deselectAllButton;
     @FXML private TableView tableView;
-    @FXML private RadioButton rbExact;
-    @FXML private RadioButton rbContains;
-    @FXML private RadioButton rbStartsWith;
+    @FXML private RadioButton rbPDF;
+    @FXML private RadioButton rbWord;
+    @FXML private RadioButton rbZIP;
     @FXML private RadioButton rbEndsWith;
     @FXML private RadioButton rbRegularExpression;
     @FXML
@@ -46,7 +44,7 @@ public class ConverterController {
         ObservableList<ConverterItem> ConverterList = tableView.getItems();
         ConverterList.clear();
         String path = pathfield.getValue();
-        searchDirectories(path, filterfield.getText(), getStrategy(), tableView.getItems());
+        searchDirectories(path, getStrategy(), tableView.getItems());
         selected.setCellFactory(CheckBoxTableCell.forTableColumn(selected));
         searchButton.setDisable(false);
     }
@@ -116,7 +114,7 @@ public class ConverterController {
             ObservableList<ConverterItem> ConverterList = tableView.getItems();
             ConverterList.clear();
             String path = pathfield.getValue();
-            searchDirectories(path, filterfield.getText(), getStrategy(), tableView.getItems());
+            searchDirectories(path, getStrategy(), tableView.getItems());
         }
         if (alert.getResult() == ButtonType.CANCEL){
             System.out.println("Close");
@@ -143,16 +141,15 @@ public class ConverterController {
     /**
      * Description: checks which radiobutton is used and sets the new  value for strategy.
      * @param name: name of the RB
-     * @param filter: name of the filter method
      * @param strategy: used in searchDirectories as filter
      * @return
      */
-    private boolean matchFilter(String name, String filter, EnumConverterStrategy strategy){
-        if(strategy == EnumConverterStrategy.EXACT && name.equals(filter)) return true;
-        if(strategy == EnumConverterStrategy.CONTAINS && name.contains(filter)) return true;
-        if(strategy == EnumConverterStrategy.STARTS_WITH && name.startsWith(filter)) return true;
-        if(strategy == EnumConverterStrategy.ENDS_WITH && name.endsWith(filter)) return true;
-        return strategy == EnumConverterStrategy.REGULAR_EXPRESSION && name.matches(filter);
+    private boolean matchConverter(String name, EnumConverterStrategy strategy){
+        if(strategy == EnumConverterStrategy.PDF) return true;
+        if(strategy == EnumConverterStrategy.WORD) return true;
+        if(strategy == EnumConverterStrategy.ZIP) return true;
+        if(strategy == EnumConverterStrategy.ENDS_WITH) return true;
+        return strategy == EnumConverterStrategy.REGULAR_EXPRESSION;
     }
 
     /**
@@ -160,9 +157,9 @@ public class ConverterController {
      * @return
      */
     private EnumConverterStrategy getStrategy(){
-        if(rbExact.isSelected()) return EnumConverterStrategy.EXACT;
-        if(rbContains.isSelected()) return EnumConverterStrategy.CONTAINS;
-        if(rbStartsWith.isSelected()) return EnumConverterStrategy.STARTS_WITH;
+        if(rbPDF.isSelected()) return EnumConverterStrategy.PDF;
+        if(rbWord.isSelected()) return EnumConverterStrategy.WORD;
+        if(rbZIP.isSelected()) return EnumConverterStrategy.ZIP;
         if(rbEndsWith.isSelected()) return EnumConverterStrategy.ENDS_WITH;
         if(rbRegularExpression.isSelected()) return EnumConverterStrategy.REGULAR_EXPRESSION;
         return EnumConverterStrategy.UNKNOWN;
@@ -177,38 +174,35 @@ public class ConverterController {
      * Else it'll search it with the given filter and method and search them. If the method finds directories it'll
      * get the FileCreationTime and create a new ConverterItem.
      * @param path: rootpath
-     * @param filter: filter input
      * @param method: method/strategy
      * @param ConverterList: list where all the dirs are saved.
      */
-    private void searchDirectories(String path, String filter, EnumConverterStrategy method, ObservableList<ConverterItem> ConverterList){
-        File currentDir = new File(path);
+    private void searchDirectories(String path, EnumConverterStrategy method, ObservableList<ConverterItem> ConverterList){
+        File currentFile = new File(path);
         try{
-            File[] dirs = currentDir.listFiles();
-            if (dirs == null){
+            File[] files = currentFile.listFiles();
+            if (files == null){
                 return;
             }
-            for (File dir: dirs){
-                if(dir.isDirectory()){
-                    String name = dir.getName();
-                    if (filter != "") {
-                        if (matchFilter(name, filter, method)) {
-                            FileTime creationTime = (FileTime) Files.getAttribute(Path.of(dir.getAbsolutePath()), "creationTime");
-                            ConverterList.add(new ConverterItem(dir.getAbsolutePath(), creationTime.toString()));
+            for (File file: files){
+                if(file.isFile()){
+                    String name = file.getName();
+                        if (matchConverter(name, method)) {
+                            FileTime creationTime = (FileTime) Files.getAttribute(Path.of(file.getAbsolutePath()), "creationTime");
+                            ConverterList.add(new ConverterItem(file.getAbsolutePath(), creationTime.toString()));
 
                         } else {
-                            searchDirectories(dir.getAbsolutePath(), filter, method, ConverterList);
+                            searchDirectories(file.getAbsolutePath(), method, ConverterList);
                         }
                     }
                     else {
-                        FileTime creationTime = (FileTime) Files.getAttribute(Path.of(dir.getAbsolutePath()), "creationTime");
-                        ConverterList.add(new ConverterItem(dir.getAbsolutePath(), creationTime.toString()));
-                        searchDirectories(dir.getAbsolutePath(), filter, method, ConverterList);
+                        FileTime creationTime = (FileTime) Files.getAttribute(Path.of(file.getAbsolutePath()), "creationTime");
+                        ConverterList.add(new ConverterItem(file.getAbsolutePath(), creationTime.toString()));
+                        searchDirectories(file.getAbsolutePath(), method, ConverterList);
                     }
                 }
-            }
         } catch (SecurityException e){
-            System.out.println("Verzeichnis ist schreibgeschützt" + currentDir.getAbsolutePath());
+            System.out.println("Verzeichnis ist schreibgeschützt" + currentFile.getAbsolutePath());
         } catch (IOException ex){
 
         }

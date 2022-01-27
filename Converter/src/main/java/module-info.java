@@ -7,4 +7,6 @@ module com.example.converter {
     exports com.example.converter;
     exports com.example.converter.util;
     opens com.example.converter.util to javafx.fxml;
+    opens com.example.converter.util.converter to org.apache.pdfbox;
+    exports com.example.converter.util.converter;
 }
